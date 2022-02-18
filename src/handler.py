@@ -17,6 +17,8 @@ class Handler(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setFixedSize(800, 600)
 
+        self.MainWindow = MainWindow
+
         self.icon = QtGui.QIcon()
         self.icon.addPixmap(
             QtGui.QPixmap(
@@ -241,3 +243,12 @@ class Handler(object):
         info_dialog.setStandardButtons(QtWidgets.QMessageBox.Ok)
         info_dialog.setDefaultButton(QtWidgets.QMessageBox.Ok)
         info_dialog.exec_()
+
+    def open_btn_action(self):
+        file_path = QtWidgets.QFileDialog.getOpenFileName(
+            self.MainWindow, "Open a Text File", "", "Text Files (*.txt)"
+        )
+
+        if file_path[0]:
+            with open(file_path[0], "r") as file:
+                self.input_area.setText(file.read())
