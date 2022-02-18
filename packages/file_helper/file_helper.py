@@ -1,7 +1,7 @@
 from os import mkdir
 
 
-class FileHandler:
+class FileHelper:
     """
     This class handles the file operations.
 

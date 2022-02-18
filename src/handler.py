@@ -1,20 +1,19 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from . import constants
-from ..packages import TextToSpeech
-from ..packages import FileHandler
-from pathlib import Path
 from datetime import date, datetime
+from pathlib import Path
+from ..packages import TextToSpeech
+from ..packages import FileHelper
+from . import constants
 
 
 class Handler(object):
-    def __init__(self):
+    def __init__(self) -> None:
         self.key_list = constants.LANGUAGES.keys()
         self.home = Path.home()
         self.mp3_save_path = f"{self.home}/{constants.AUDIO_DIR_PATH}"
-        FileHandler.create_dir(self.mp3_save_path)
+        FileHelper.create_dir(self.mp3_save_path)
 
     def setupUi(self, MainWindow):
-
         MainWindow.setObjectName("MainWindow")
         MainWindow.setFixedSize(800, 600)
 
@@ -31,8 +30,17 @@ class Handler(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
+        self.language_select = QtWidgets.QComboBox(self.centralwidget)
+        self.language_select.setGeometry(QtCore.QRect(10, 40, 220, 40))
+        self.language_select.setObjectName("language_select")
+
+        for language in constants.LANGUAGES:
+            self.language_select.addItem(constants.LANGUAGES[language])
+
+        self.language_select.setCurrentText("English")
+
         self.volume = QtWidgets.QSlider(self.centralwidget)
-        self.volume.setGeometry(QtCore.QRect(10, 60, 200, 17))
+        self.volume.setGeometry(QtCore.QRect(10, 150, 220, 17))
         self.volume.setMinimum(10)
         self.volume.setMaximum(200)
         self.volume.setSingleStep(1)
@@ -42,7 +50,7 @@ class Handler(object):
         self.volume.setObjectName("volume")
 
         self.speed = QtWidgets.QSlider(self.centralwidget)
-        self.speed.setGeometry(QtCore.QRect(10, 130, 200, 17))
+        self.speed.setGeometry(QtCore.QRect(10, 220, 220, 17))
         self.speed.setMinimum(10)
         self.speed.setMaximum(200)
         self.speed.setProperty("value", 100)
@@ -51,64 +59,66 @@ class Handler(object):
         self.speed.setObjectName("speed")
 
         self.input_area = QtWidgets.QTextEdit(self.centralwidget)
-        self.input_area.setGeometry(QtCore.QRect(230, 60, 560, 410))
+        self.input_area.setGeometry(QtCore.QRect(240, 10, 550, 470))
         self.input_area.setObjectName("input_area")
 
-        self.language_select = QtWidgets.QComboBox(self.centralwidget)
-        self.language_select.setGeometry(QtCore.QRect(340, 480, 230, 50))
-        self.language_select.setObjectName("language_select")
-
-        for language in constants.LANGUAGES:
-            self.language_select.addItem(constants.LANGUAGES[language])
-
-        self.language_select.setCurrentText("English")
-
-        self.save_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.save_btn.setGeometry(QtCore.QRect(580, 480, 100, 50))
-        self.save_btn.setObjectName("save_btn")
-        self.save_btn.clicked.connect(self.save_btn_action)
+        self.volume_label = QtWidgets.QLabel(self.centralwidget)
+        self.volume_label.setGeometry(QtCore.QRect(10, 120, 110, 26))
+        self.volume_label.setObjectName("volume_label")
+        self.speed_label = QtWidgets.QLabel(self.centralwidget)
+        self.speed_label.setGeometry(QtCore.QRect(10, 190, 100, 26))
+        self.speed_label.setObjectName("speed_label")
+        self.language_label = QtWidgets.QLabel(self.centralwidget)
+        self.language_label.setGeometry(QtCore.QRect(10, 10, 110, 26))
+        self.language_label.setObjectName("language_label")
 
         self.play_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.play_btn.setGeometry(QtCore.QRect(690, 480, 100, 50))
+        self.play_btn.setGeometry(QtCore.QRect(690, 490, 100, 40))
         self.play_btn.setObjectName("play_btn")
         self.play_btn.clicked.connect(self.play_btn_action)
 
+        self.stop_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.stop_btn.setGeometry(QtCore.QRect(580, 490, 100, 40))
+        self.stop_btn.setObjectName("stop_btn")
+
         self.reset_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.reset_btn.setGeometry(QtCore.QRect(230, 480, 100, 50))
+        self.reset_btn.setGeometry(QtCore.QRect(10, 290, 220, 40))
         self.reset_btn.setObjectName("reset_btn")
         self.reset_btn.clicked.connect(self.reset_btn_action)
 
-        self.volume_label = QtWidgets.QLabel(self.centralwidget)
-        self.volume_label.setGeometry(QtCore.QRect(10, 20, 90, 26))
-        self.volume_label.setObjectName("volume_label")
+        self.open_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.open_btn.setGeometry(QtCore.QRect(240, 490, 170, 40))
+        self.open_btn.setObjectName("open_btn")
 
-        self.speed_label = QtWidgets.QLabel(self.centralwidget)
-        self.speed_label.setGeometry(QtCore.QRect(10, 90, 80, 26))
-        self.speed_label.setObjectName("speed_label")
-
-        self.input_label = QtWidgets.QLabel(self.centralwidget)
-        self.input_label.setGeometry(QtCore.QRect(230, 20, 180, 26))
-        self.input_label.setObjectName("input_label")
-
-        self.line = QtWidgets.QFrame(self.centralwidget)
-        self.line.setGeometry(QtCore.QRect(410, 40, 380, 3))
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
+        self.save_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.save_btn.setGeometry(QtCore.QRect(420, 490, 150, 40))
+        self.save_btn.setObjectName("save_btn")
+        self.save_btn.clicked.connect(self.save_btn_action)
 
         self.speed_value = QtWidgets.QLabel(self.centralwidget)
-        self.speed_value.setGeometry(QtCore.QRect(130, 90, 80, 26))
+        self.speed_value.setGeometry(QtCore.QRect(130, 190, 100, 26))
         self.speed_value.setAlignment(
             QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
         )
         self.speed_value.setObjectName("speed_value")
 
         self.volume_value = QtWidgets.QLabel(self.centralwidget)
-        self.volume_value.setGeometry(QtCore.QRect(130, 20, 80, 26))
+        self.volume_value.setGeometry(QtCore.QRect(130, 120, 100, 26))
         self.volume_value.setAlignment(
             QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
         )
         self.volume_value.setObjectName("volume_value")
+
+        self.line = QtWidgets.QFrame(self.centralwidget)
+        self.line.setGeometry(QtCore.QRect(10, 260, 220, 3))
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.line_2 = QtWidgets.QFrame(self.centralwidget)
+        self.line_2.setGeometry(QtCore.QRect(10, 100, 220, 3))
+        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_2.setObjectName("line_2")
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -117,12 +127,12 @@ class Handler(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 800, 31))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 801, 31))
         self.menuBar.setObjectName("menuBar")
         self.menuHelp = QtWidgets.QMenu(self.menuBar)
         self.menuHelp.setObjectName("menuHelp")
-        MainWindow.setMenuBar(self.menuBar)
 
+        MainWindow.setMenuBar(self.menuBar)
         self.actionAbout = QtWidgets.QAction(MainWindow)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout.triggered.connect(self.about_dialog)
@@ -137,17 +147,31 @@ class Handler(object):
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        MainWindow.setTabOrder(self.language_select, self.volume)
+        MainWindow.setTabOrder(self.volume, self.speed)
+        MainWindow.setTabOrder(self.speed, self.play_btn)
+        MainWindow.setTabOrder(self.play_btn, self.stop_btn)
+        MainWindow.setTabOrder(self.stop_btn, self.save_btn)
+        MainWindow.setTabOrder(self.save_btn, self.open_btn)
+        MainWindow.setTabOrder(self.open_btn, self.reset_btn)
+        MainWindow.setTabOrder(self.reset_btn, self.input_area)
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "LetMeSpeak"))
         self.volume_label.setText(_translate("MainWindow", "Volume"))
         self.speed_label.setText(_translate("MainWindow", "Speed"))
+        self.input_area.setPlaceholderText(
+            _translate("MainWindow", "Paste your text here...")
+        )
         self.play_btn.setText(_translate("MainWindow", "Play"))
-        self.input_label.setText(_translate("MainWindow", "Paste your text here"))
         self.reset_btn.setText(_translate("MainWindow", "Reset"))
         self.speed_value.setText(_translate("MainWindow", "100"))
         self.volume_value.setText(_translate("MainWindow", "100"))
-        self.save_btn.setText(_translate("MainWindow", "Save"))
+        self.open_btn.setText(_translate("MainWindow", "Open a Text File"))
+        self.stop_btn.setText(_translate("MainWindow", "Stop"))
+        self.language_label.setText(_translate("MainWindow", "Language"))
+        self.save_btn.setText(_translate("MainWindow", "Save as mp3"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
 
@@ -155,7 +179,20 @@ class Handler(object):
     def generate_name() -> str:
         current_date = date.today().strftime("%d-%m-%Y")
         current_time = datetime.now().strftime("%H-%M-%S")
-        return f"audio_{current_date}-{current_time}"
+        return f"Audio_{current_date}-{current_time}"
+
+    def setup_audio(self):
+        for key in self.key_list:
+            if constants.LANGUAGES[key] == self.language_select.currentText():
+                language = key
+                break
+
+        self.tts = TextToSpeech(
+            text=self.input_area.toPlainText(),
+            language=language,
+            speed=self.speed.value(),
+            volume=self.volume.value(),
+        )
 
     def about_dialog(self):
         about_dialog = QtWidgets.QMessageBox()
@@ -180,18 +217,7 @@ class Handler(object):
         about_dialog.exec_()
 
     def play_btn_action(self):
-        for key in self.key_list:
-            if constants.LANGUAGES[key] == self.language_select.currentText():
-                language = key
-                break
-
-        self.tts = TextToSpeech(
-            text=self.input_area.toPlainText(),
-            language=language,
-            speed=self.speed.value(),
-            volume=self.volume.value(),
-        )
-
+        self.setup_audio()
         self.tts.say()
 
     def reset_btn_action(self):
@@ -204,6 +230,7 @@ class Handler(object):
         self.volume_value.setText("100")
 
     def save_btn_action(self):
+        self.setup_audio()
         file_name = self.generate_name()
         self.tts.save_to_mp3(f"{self.mp3_save_path}/{file_name}.mp3")
 
