@@ -1,6 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from datetime import date, datetime
+import time
 from pathlib import Path
+from multiprocessing import Process, Event
 from ..packages import TextToSpeech
 from ..packages import FileHelper
 from . import constants
@@ -8,6 +10,7 @@ from . import constants
 
 class Handler(object):
     def __init__(self) -> None:
+
         self.key_list = constants.LANGUAGES.keys()
         self.home = Path.home()
         self.mp3_save_path = f"{self.home}/{constants.AUDIO_DIR_PATH}"
@@ -219,7 +222,16 @@ class Handler(object):
 
     def play_btn_action(self):
         self.setup_audio()
-        self.tts.say()
+        self.t1 = Process(
+            target=self.tts.say,
+            name="PlayProcess",
+            daemon=True,
+        )
+        self.t1.start()
+
+    def stop_btn_action(self):
+        self.t1.close()
+        self.t1.join()
 
     def reset_btn_action(self):
         self.language_select.setCurrentText("English")

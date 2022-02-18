@@ -23,7 +23,7 @@ git clone https://github.com/s3h4n/LetMeSpeak.git
 
 Run following command.
 ```bash
-python3 -m LetMeTalk install
+python3 -m LetMeSpeak install
 ```
 
 ## Contributing 🤝
