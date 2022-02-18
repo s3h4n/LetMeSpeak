@@ -21,9 +21,7 @@ class Handler(object):
 
         self.icon = QtGui.QIcon()
         self.icon.addPixmap(
-            QtGui.QPixmap(
-                "/home/sehan/Python-Projects/LetMeTalk/resources/LetMeTalk-removebg-preview.png"
-            ),
+            QtGui.QPixmap("LetMeTalk/resources/LetMeTalk-removebg-preview.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
@@ -91,6 +89,7 @@ class Handler(object):
         self.open_btn = QtWidgets.QPushButton(self.centralwidget)
         self.open_btn.setGeometry(QtCore.QRect(240, 490, 170, 40))
         self.open_btn.setObjectName("open_btn")
+        self.open_btn.clicked.connect(self.open_btn_action)
 
         self.save_btn = QtWidgets.QPushButton(self.centralwidget)
         self.save_btn.setGeometry(QtCore.QRect(420, 490, 150, 40))
