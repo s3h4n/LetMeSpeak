@@ -1,9 +1,18 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from . import constants
 from ..packages import TextToSpeech
+from ..packages import FileHandler
+from pathlib import Path
+from datetime import date, datetime
 
 
 class Handler(object):
+    def __init__(self):
+        self.key_list = constants.LANGUAGES.keys()
+        self.home = Path.home()
+        self.mp3_save_path = f"{self.home}/{constants.AUDIO_DIR_PATH}"
+        FileHandler.create_dir(self.mp3_save_path)
+
     def setupUi(self, MainWindow):
 
         MainWindow.setObjectName("MainWindow")
@@ -49,8 +58,6 @@ class Handler(object):
         self.language_select.setGeometry(QtCore.QRect(340, 480, 230, 50))
         self.language_select.setObjectName("language_select")
 
-        self.key_list = constants.LANGUAGES.keys()
-
         for language in constants.LANGUAGES:
             self.language_select.addItem(constants.LANGUAGES[language])
 
@@ -59,6 +66,7 @@ class Handler(object):
         self.save_btn = QtWidgets.QPushButton(self.centralwidget)
         self.save_btn.setGeometry(QtCore.QRect(580, 480, 100, 50))
         self.save_btn.setObjectName("save_btn")
+        self.save_btn.clicked.connect(self.save_btn_action)
 
         self.play_btn = QtWidgets.QPushButton(self.centralwidget)
         self.play_btn.setGeometry(QtCore.QRect(690, 480, 100, 50))
@@ -143,6 +151,12 @@ class Handler(object):
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
 
+    @staticmethod
+    def generate_name() -> str:
+        current_date = date.today().strftime("%d-%m-%Y")
+        current_time = datetime.now().strftime("%H-%M-%S")
+        return f"audio_{current_date}-{current_time}"
+
     def about_dialog(self):
         about_dialog = QtWidgets.QMessageBox()
         about_dialog.setWindowTitle("About")
@@ -186,5 +200,17 @@ class Handler(object):
         self.speed.setValue(100)
         self.volume.setValue(100)
 
-        self.speed_value.setText("MainWindow", "100")
-        self.volume_value.setText("MainWindow", "100")
+        self.speed_value.setText("100")
+        self.volume_value.setText("100")
+
+    def save_btn_action(self):
+        file_name = self.generate_name()
+        self.tts.save_to_mp3(f"{self.mp3_save_path}/{file_name}.mp3")
+
+        info_dialog = QtWidgets.QMessageBox()
+        info_dialog.setWindowTitle("Info")
+        info_dialog.setIcon(QtWidgets.QMessageBox.Information)
+        info_dialog.setText(f"Audio saved to {self.mp3_save_path}/{file_name}.mp3")
+        info_dialog.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        info_dialog.setDefaultButton(QtWidgets.QMessageBox.Ok)
+        info_dialog.exec_()

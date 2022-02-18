@@ -18,10 +18,13 @@ class TextToSpeech:
 
         :param text: Text to be converted to speech, default is "Please Type Something to Speak".
         :type text: str, optional
+
         :param language: Language of the text, default is "en".
         :type language: str, optional
+
         :param volume: Volume of the speech, default is 100.
         :type volume: int, optional
+
         :param speed: Speed of the speech, default is 100.
         :type speed: int, optional
         """
@@ -53,6 +56,7 @@ class TextToSpeech:
 
         :param file_name: Name of the mp3 file.
         :type file_name: str
+
         :return: True if the text was converted to speech and saved to a mp3 file, False if not.
         :rtype: bool
         """
@@ -63,6 +67,7 @@ class TextToSpeech:
             print("Error: ", e)
             return False
 
+    @staticmethod
     def stop() -> None:
         """
         stop will stop the speach.

@@ -1,3 +1,5 @@
+AUDIO_DIR_PATH = "Music/LetMeTalk"
+
 LANGUAGES = {
     "af": "Afrikaans",
     "ar": "Arabic",
