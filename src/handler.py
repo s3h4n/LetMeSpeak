@@ -24,7 +24,7 @@ class Handler(object):
 
         self.icon = QtGui.QIcon()
         self.icon.addPixmap(
-            QtGui.QPixmap("LetMeTalk/resources/LetMeTalk-removebg-preview.png"),
+            QtGui.QPixmap("LetMeSpeak/resources/LetMeTalk-removebg-preview.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
@@ -204,7 +204,7 @@ class Handler(object):
 
         self.icon = QtGui.QIcon()
         self.icon.addPixmap(
-            QtGui.QPixmap("LetMeTalk/resources/LetMeTalk-removebg-preview.png"),
+            QtGui.QPixmap("LetMeSpeak/resources/LetMeTalk-removebg-preview.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
