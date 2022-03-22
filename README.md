@@ -3,6 +3,12 @@ Let-Me-Speak is a simple python based  Text-To-Speech application that  supports
 
 ## Requirements ✔️
 
+
+- PyQt5
+```python
+pip install PyQt5
+```
+
 - google_speech
 ```python
 pip install google_speech
